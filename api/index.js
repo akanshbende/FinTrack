@@ -11,23 +11,14 @@ const Transaction = require("./models/Transaction");
 const { default: mongoose } = require("mongoose");
 const secret = process.env.JWT_SECRET;
 
-// const url = `${process.env.DB_URL}`;
-// console.log(url);
+const url = `${process.env.DB_URL}`;
+console.log(url);
+
 app.use(cors());
 app.use(express.json()); //parse body to json
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.json("Welcome to FinTrack Server");
-});
-
-app.listen(4040, () => {
-  console.log("SERVER IS RUNNING AT 4040");
-});
-
-mongoose.connect(
-  "mongodb+srv://AdminAkansh:Admin@clusterakansh.734wjwt.mongodb.net/FinTrack"
-);
+mongoose.connect(url);
 
 app.post("/api/register", async (req, res) => {
   // console.log(req.body);
@@ -302,4 +293,12 @@ app.post("/api/logout", (req, res) => {
   // For example, setting the token's expiration time to a past date.
 
   res.json({ message: "Logout successful" });
+});
+
+app.get("/", (req, res) => {
+  res.json("Welcome to FinTrack Server");
+});
+
+app.listen(4040, () => {
+  console.log("SERVER IS RUNNING AT 4040");
 });
