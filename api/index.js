@@ -12,7 +12,6 @@ const { default: mongoose } = require("mongoose");
 const secret = process.env.JWT_SECRET;
 
 const url = `${process.env.DB_URL}`;
-console.log(url);
 
 app.use(cors());
 app.use(express.json()); //parse body to json
