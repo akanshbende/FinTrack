@@ -296,7 +296,7 @@ app.post("/api/logout", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.json("Welcome to FinTrack Server");
+  res.send("Welcome to FinTrack Server");
 });
 
 app.listen(4040, () => {
