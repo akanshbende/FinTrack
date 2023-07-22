@@ -17,8 +17,8 @@ app.use(cors());
 app.use(express.json()); //parse body to json
 app.use(bodyParser.json());
 
-app.get("/api/test", (req, res) => {
-  res.json("TEST OK");
+app.get("/", (req, res) => {
+  res.json("Welcome to FinTrack Server");
 });
 
 app.listen(4040, () => {
