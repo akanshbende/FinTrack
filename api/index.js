@@ -19,6 +19,10 @@ app.use(bodyParser.json());
 
 mongoose.connect(url);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to FinTrack Server");
+});
+
 app.post("/api/register", async (req, res) => {
   // console.log(req.body);
   try {
@@ -292,10 +296,6 @@ app.post("/api/logout", (req, res) => {
   // For example, setting the token's expiration time to a past date.
 
   res.json({ message: "Logout successful" });
-});
-
-app.get("/", (req, res) => {
-  res.send("Welcome to FinTrack Server");
 });
 
 app.listen(4040, () => {
