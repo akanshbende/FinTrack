@@ -10,25 +10,31 @@ function Login() {
   const loginUser = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(Config.API_URL + "/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", // lots of type-binary,urlencoded
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    const data = await response.json(); // if matched then
-    if (data.user) {
-      localStorage.setItem("token", data.user);
-      // alert("Login Successful");
-      toast.success("Login Successfull!!");
-      navigate("/transaction");
-    } else {
-      toast.error("Login Failed");
-      // alert("Login Failed");
+    try {
+      const response = await fetch(Config.API_URL + "/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // lots of type-binary,urlencoded
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const data = await response.json(); // if matched then
+      console.log(data);
+
+      if (data.user) {
+        localStorage.setItem("token", data.user);
+        // alert("Login Successful");
+        toast.success("Login Successfull!!");
+        navigate("/transaction");
+      } else {
+        toast.error("Login Failed!!");
+        // alert("Login Failed");
+      }
+    } catch (error) {
+      console.log(error);
     }
     // console.log(data);
   };

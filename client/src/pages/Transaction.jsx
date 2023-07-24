@@ -9,6 +9,7 @@ import { IconButton } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FlipMove from "react-flip-move";
 import { toast } from "react-toastify";
+import { MutatingDots } from "react-loader-spinner";
 // import jwt from "jsonwebtoken";
 function Transaction() {
   const [name, setName] = useState("");
@@ -16,13 +17,14 @@ function Transaction() {
   const [description, setDescription] = useState("");
   const [refresh, setRefresh] = useState(false);
 
+  const [loading, setLoading] = useState(true);
   const toggleRefresh = () => {
     setRefresh(!refresh);
   };
 
   const [user, setUser] = useState("");
   const [transactionData, setTransactionData] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   // console.log(user);
   // console.log(user.id);
 
@@ -176,7 +178,7 @@ function Transaction() {
 
     const data = await req.json();
 
-    // console.log(data);
+    console.log(data);
     if (data.status === "ok") {
       setName("");
       setDescription("");
@@ -225,7 +227,9 @@ function Transaction() {
 
   const deleteTransaction = async (transactionId) => {
     console.log(transactionId);
+
     try {
+      // setLoading(true);
       const url = `${Config.API_URL}/transactions/${transactionId}`;
 
       const response = await fetch(url, {
@@ -235,21 +239,24 @@ function Transaction() {
           "x-access-token": localStorage.getItem("token"),
         },
       });
-      console.log(response.ok);
+      console.log("Response " + response.ok);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
       // getTransactions(userId);
       const data = await response.json();
-      // console.log(data.status);
+      console.log(data);
+      console.log("DATA STATUS" + data.status);
 
       if (data.status === "ok") {
         // Handle success, e.g., update UI or display a success message
+        setLoading(false);
         navigate("/transaction");
         setRefresh(!refresh);
       } else {
         // Handle error, e.g., display an error message
+        toast.error(data.error);
       }
     } catch (error) {
       console.error("Error while deleting the transaction:", error);
@@ -276,101 +283,122 @@ function Transaction() {
     toast.success("Logout Successfully");
     navigate("/");
   };
+  console.log(loading);
   return (
     <>
-      <main>
-        <div className="user">
-          <h4>{user?.name}</h4>
-          <h4>{user?.email}</h4>
+      {loading === true ? (
+        <div className="loading">
+          <MutatingDots
+            height="100"
+            width="100"
+            color="#4fa94d"
+            s
+            secondaryColor="#4fa94d"
+            radius="12.5"
+            ariaLabel="mutating-dots-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={loading}
+          />
         </div>
-        <h1>
-          ₹ {balance ? balance : 0}
-          <span>.{paise}</span>
-        </h1>
-        <div className="logout">
-          <IconButton aria-label="delete" size="large" onClick={logoutUser}>
-            <LogoutIcon
-              fontSize="inherit"
-              color="secondary"
-              sx={{ color: "#2aa996" }}
-            />
-          </IconButton>
-        </div>
-        {/* <button onClick={logoutUser}>Logout</button> */}
-        <form action="" onSubmit={addNewTransaction}>
-          <div className="basics">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="+200<space>Rent"
-            />
-            <input
-              type="datetime-local"
-              name=""
-              value={datetime}
-              onChange={(e) => setDatetime(e.target.value)}
-              id=""
-            />
+      ) : (
+        <main>
+          <div className="user">
+            <h4>{user?.name}</h4>
+            <h4>{user?.email}</h4>
           </div>
-          <div className="description">
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="description"
-            />
+          <h1>
+            ₹ {balance ? balance : 0}
+            <span>.{paise}</span>
+          </h1>
+          <div className="logout">
+            <IconButton aria-label="delete" size="large" onClick={logoutUser}>
+              <LogoutIcon
+                fontSize="inherit"
+                color="secondary"
+                sx={{ color: "#2aa996" }}
+              />
+            </IconButton>
           </div>
-          <button type="submit">Add new Transaction</button>
-        </form>
+          {/* <button onClick={logoutUser}>Logout</button> */}
+          <form action="" onSubmit={addNewTransaction}>
+            <div className="basics">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="+200<space>Rent"
+              />
+              <input
+                type="datetime-local"
+                name=""
+                value={datetime}
+                onChange={(e) => setDatetime(e.target.value)}
+                placeholder="dd-mm--yy --"
+                id=""
+              />
+            </div>
+            <div className="description">
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="description"
+              />
+            </div>
+            <button type="submit">Add new Transaction</button>
+          </form>
 
-        <div className="transactions">
-          <FlipMove>
-            {transactionData &&
-              transactionData.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <div className="transaction">
-                      <div className="data">
-                        <div className="left">
-                          <div className="name">{item?.name}</div>
-                          <div className="description">{item?.description}</div>
+          <div className="transactions">
+            <FlipMove>
+              {transactionData &&
+                transactionData.map((item, index) => {
+                  return (
+                    <div key={index}>
+                      <div className="transaction">
+                        <div className="data">
+                          <div className="left">
+                            <div className="name">{item?.name}</div>
+                            <div className="description">
+                              {item?.description}
+                            </div>
+                          </div>
+                          <div className="right">
+                            <div
+                              className={
+                                "price " + (item?.price < 0 ? "red" : "green")
+                              }
+                            >
+                              {item?.price}
+                            </div>
+                            <div className="datetime">
+                              {item?.datetime?.slice(0, 10)}
+                            </div>
+                          </div>
                         </div>
-                        <div className="right">
-                          <div
-                            className={
-                              "price " + (item?.price < 0 ? "red" : "green")
-                            }
+                        <div className="delete">
+                          {/* {console.log(userId)} */}
+                          {console.log("Transaction ID : " + item?._id)}
+
+                          <IconButton
+                            aria-label="delete"
+                            size="small"
+                            onClick={() => {
+                              deleteTransaction(item?._id);
+                              setRefresh(!refresh);
+                            }}
                           >
-                            {item?.price}
-                          </div>
-                          <div className="datetime">
-                            {item?.datetime?.slice(0, 10)}
-                          </div>
+                            <DeleteIcon color="error" />
+                          </IconButton>
                         </div>
-                      </div>
-                      <div className="delete">
-                        {/* {console.log(userId)} */}
-                        {console.log("Transaction ID : " + item?._id)}
-
-                        <IconButton
-                          aria-label="delete"
-                          size="small"
-                          onClick={() => {
-                            deleteTransaction(item?._id);
-                            setRefresh(!refresh);
-                          }}
-                        >
-                          <DeleteIcon color="error" />
-                        </IconButton>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-          </FlipMove>
-        </div>
-      </main>
+                  );
+                })}
+            </FlipMove>
+          </div>
+        </main>
+      )}
     </>
   );
 }

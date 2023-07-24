@@ -243,7 +243,10 @@ app.delete("/api/transactions/:transactionId", async (req, res) => {
     // Delete the transaction
     await Transaction.deleteOne({ _id: transactionId });
 
-    return res.json({ message: "Transaction deleted successfully" });
+    return res.json({
+      status: "ok",
+      message: "Transaction deleted successfully",
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
