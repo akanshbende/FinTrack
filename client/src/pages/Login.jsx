@@ -29,7 +29,8 @@ function Login() {
         // alert("Login Successful");
         toast.success("Login Successfull!!");
         navigate("/transaction");
-      } else {
+      }
+      if (data.user === false) {
         toast.error("Login Failed!!");
         // alert("Login Failed");
       }

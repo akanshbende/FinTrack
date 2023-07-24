@@ -56,7 +56,7 @@ function Transaction() {
       }
     }
   }, [refresh]);
-
+  // console.log(refresh);
   // console.log(refresh);
   // const getUser = async () => {};
 
@@ -144,11 +144,11 @@ function Transaction() {
     ":" +
     currentdate.getHours();
 
-  console.log(DateTime);
+  // console.log(DateTime);
 
   const addNewTransaction = async (e) => {
     e.preventDefault();
-
+    // setLoading(true);
     const url = Config.API_URL + "/add-transaction";
     const price = name.split(" ")[0];
     const nameT = name.substring(price.length + 1);
@@ -159,6 +159,12 @@ function Transaction() {
     // Check if the "nameT" value is empty before making the API call
     if (!nameT.trim()) {
       console.error("Name is required.");
+      toast.error("Name is required.");
+      return;
+    }
+    if (!actualDate.trim()) {
+      console.error("Date is required.");
+      toast.error("Date is required.");
       return;
     }
 
@@ -178,8 +184,9 @@ function Transaction() {
 
     const data = await req.json();
 
-    console.log(data);
+    // console.log(data);
     if (data.status === "ok") {
+      setLoading(false);
       setName("");
       setDescription("");
       setDatetime("");
@@ -193,6 +200,7 @@ function Transaction() {
     const url = Config.API_URL + `/user-transactions/${userId}`;
     // console.log(url);
     try {
+      // setLoading(true);
       const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
@@ -204,15 +212,16 @@ function Transaction() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-
-      // console.log(transactionData);
+      // console.log(data);
       if (data.status === "ok") {
         // Handle success, e.g., update UI or display a success message
         // navigate("/transaction");
         setTransactionData(data?.transactions);
+        // console.log(transactionData);
         setLoading(false);
         // setRefresh(!refresh);
       }
+      // console.log(transactionData);
       // console.log(data.user._id);
       // setUser(data.user);
     } catch (error) {
@@ -226,7 +235,7 @@ function Transaction() {
   // console.log(transactionData);
 
   const deleteTransaction = async (transactionId) => {
-    console.log(transactionId);
+    // console.log(transactionId);
 
     try {
       // setLoading(true);
@@ -239,21 +248,24 @@ function Transaction() {
           "x-access-token": localStorage.getItem("token"),
         },
       });
-      console.log("Response " + response.ok);
+
+      const data = await response.json();
+      // console.log("Response " + response.ok);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
       // getTransactions(userId);
-      const data = await response.json();
-      console.log(data);
-      console.log("DATA STATUS" + data.status);
+
+      // console.log(data);
+      // console.log("DATA STATUS" + data.status);
 
       if (data.status === "ok") {
         // Handle success, e.g., update UI or display a success message
-        setLoading(false);
-        navigate("/transaction");
-        setRefresh(!refresh);
+        // setLoading(false);
+        // navigate("/transaction");
+        // setRefresh(!refresh);
+        getTransactions(userId);
       } else {
         // Handle error, e.g., display an error message
         toast.error(data.error);
@@ -283,7 +295,7 @@ function Transaction() {
     toast.success("Logout Successfully");
     navigate("/");
   };
-  console.log(loading);
+  // console.log(loading);
   return (
     <>
       {loading === true ? (
@@ -378,7 +390,7 @@ function Transaction() {
                         </div>
                         <div className="delete">
                           {/* {console.log(userId)} */}
-                          {console.log("Transaction ID : " + item?._id)}
+                          {/* {console.log("Transaction ID : " + item?._id)} */}
 
                           <IconButton
                             aria-label="delete"
