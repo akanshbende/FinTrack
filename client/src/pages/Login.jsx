@@ -24,6 +24,10 @@ function Login() {
       const data = await response.json(); // if matched then
       console.log(data);
 
+      if (data.status === "error" && data.error === "Invalid Login") {
+        toast.error("Email Not Found !!");
+      }
+
       if (data.user) {
         localStorage.setItem("token", data.user);
         // alert("Login Successful");
@@ -31,7 +35,7 @@ function Login() {
         navigate("/transaction");
       }
       if (data.user === false) {
-        toast.error("Login Failed!!");
+        toast.error("Login Failed !!");
         // alert("Login Failed");
       }
     } catch (error) {
